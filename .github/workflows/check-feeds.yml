@@ -1,9 +1,9 @@
 name: Check RSS Feeds
 
 on:
-  # 刷新频率：默认每30分钟，支持 15/30/60 分钟等
+  # 每小时检查一次
   schedule:
-    - cron: '0 */30 * * *'
+    - cron: '0 * * * *'
   workflow_dispatch:
 
 permissions:
