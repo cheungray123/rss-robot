@@ -1,0 +1,33 @@
+# RSS 订阅源配置
+#
+# 【推荐】使用远程 JSON 管理订阅源，无需每次推送代码
+#   设置环境变量 FEEDS_URL 指向一个 JSON 文件地址即可
+#   远程 JSON 支持两种格式：
+#
+#   格式一（简单数组）：
+#     ["https://example.com/feed", "https://example2.com/atom.xml"]
+#
+#   格式二（完整对象，推荐）：
+#     {
+#       "feeds": [
+#         { "url": "https://example.com/feed" },
+#         { "url": "https://api.example.com/posts", "format": "json", "path": "data.list", "feedTitle": "某某博客", "mapping": { "title": "title", "link": "url", "pubDate": "publishedAt", "author": "author.name" } }
+#       ]
+#     }
+#
+# 本地 feeds.yml 作为备用（当 FEEDS_URL 不可用时回退）
+#
+# 本地配置格式：
+#   简单: - https://example.com
+#   完整: - url: https://api.example.com/posts
+#          format: json
+#          path: data.list
+#          mapping:
+#            title: title
+#            link: url
+#            pubDate: publishedAt
+#            author: author.name
+
+feeds:
+  - https://www.ruanyifeng.com/blog/atom.xml
+  - https://www.zhangxinxu.com/wordpress/
