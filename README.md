@@ -6,11 +6,12 @@
 
 ```
 rss-monitor/
-├── check-feeds.js        # 主脚本
-├── feeds.yml             # 本地订阅源配置（备用）
+├── check-feeds.js            # 主脚本
+├── feeds.yml                 # 本地订阅源配置（备用）
 ├── data/
-│   └── seen-articles.json # 已读文章记录（自动维护）
-└── README.md             # 本文档
+│   ├── seen-articles.json    # 已读文章记录（自动维护）
+│   └── last-check-output.json # 最近一次检查结果（JSON格式）
+└── README.md                 # 本文档
 ```
 
 ## 支持的 Feed 格式
@@ -239,7 +240,7 @@ set FEISHU_WEBHOOK_URL=https://open.feishu.cn/open-apis/bot/v2/hook/xxx && set E
 
 ### GitHub Actions 定时运行
 
-项目已内置 GitHub Actions 工作流（`.github/workflows/check-feeds.yml`），每 30 分钟自动执行一次。
+项目已内置 GitHub Actions 工作流（`.github/workflows/check-feeds.yml`），每小时自动执行一次。
 
 **配置步骤：**
 
@@ -291,3 +292,47 @@ set FEISHU_WEBHOOK_URL=https://open.feishu.cn/open-apis/bot/v2/hook/xxx && set E
 - 最多保留 500 条记录，超出后自动清理最旧的
 - GitHub Actions 运行后会自动 commit 更新到仓库
 - 如需重置，删除此文件即可（下次运行会重新初始化）
+
+## 检查结果 JSON
+
+每次检查后，结果会保存到 `data/last-check-output.json`，内容格式如下：
+
+```json
+{
+  "timestamp": "2026-04-29T12:00:00.000Z",
+  "totalNewArticles": 3,
+  "articles24h": 2,
+  "articlesOlder": 1,
+  "articles": [
+    {
+      "title": "文章标题",
+      "link": "https://example.com/article",
+      "pubDate": "2026-04-29T08:00:00.000Z",
+      "author": "作者名",
+      "feedTitle": "博客名称"
+    }
+  ]
+}
+```
+
+### 字段说明
+
+| 字段 | 说明 |
+|------|------|
+| `timestamp` | 检查时间（ISO 8601 格式） |
+| `totalNewArticles` | 本次发现的新文章总数 |
+| `articles24h` | 24小时内发布的新文章数量（会发送通知） |
+| `articlesOlder` | 超过24小时的新文章数量（不发送通知） |
+| `articles` | 新文章详情数组 |
+
+### 外链调用
+
+通过 GitHub Raw URL 直接获取最新结果：
+
+```
+https://raw.githubusercontent.com/cheungray123/rss-robot/master/data/last-check-output.json
+```
+
+**要求：仓库必须为公开(public)属性。**
+
+> 注意：GitHub Raw URL 有 60次/小时 的访问频率限制，高频调用可能受限。

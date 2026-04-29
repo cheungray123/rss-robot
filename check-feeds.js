@@ -11,6 +11,7 @@ const __dirname = dirname(__filename);
 const FEEDS_PATH = join(__dirname, 'feeds.yml');
 const DATA_DIR = join(__dirname, 'data');
 const SEEN_PATH = join(DATA_DIR, 'seen-articles.json');
+const OUTPUT_PATH = join(DATA_DIR, 'last-check-output.json');
 const MAX_SEEN = 500;
 const FEISHU_WEBHOOK = process.env.FEISHU_WEBHOOK_URL;
 const FEEDS_URL = process.env.FEEDS_URL; // 远程 JSON 订阅源地址
@@ -779,6 +780,30 @@ function formatRelativeTime(isoDate) {
 	return new Date(isoDate).toLocaleDateString('zh-CN');
 }
 
+// ─── 保存检查结果到 JSON ───
+function saveOutputToJson(newArticles, allNewArticles) {
+	const output = {
+		timestamp: new Date().toISOString(),
+		totalNewArticles: newArticles.length,
+		articles24h: newArticles.length,
+		articlesOlder: allNewArticles.length - newArticles.length,
+		articles: newArticles.map((a) => ({
+			title: a.title,
+			link: a.link,
+			pubDate: a.pubDate,
+			author: a.author,
+			feedTitle: a.feedTitle
+		}))
+	};
+
+	try {
+		writeFileSync(OUTPUT_PATH, JSON.stringify(output, null, '\t') + '\n');
+		console.log(`📄 已保存检查结果到 data/last-check-output.json`);
+	} catch (err) {
+		console.error(`❌ 保存检查结果失败: ${err.message}`);
+	}
+}
+
 // ─── 从远程 JSON 加载订阅源 ───
 async function loadFeedsFromRemote(url) {
 	console.log(`🌐 从远程加载订阅源: ${url}`);
@@ -910,6 +935,9 @@ async function main() {
 	} else {
 		console.log('✅ 所有博客均无新文章');
 	}
+
+	// 保存结果到 JSON 文件
+	saveOutputToJson(recentNew, allNewArticles);
 
 	// 5. 清理旧记录
 	const entries = Object.entries(seenData.articles);
