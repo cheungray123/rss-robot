@@ -5,6 +5,9 @@ on:
     - cron: '0 8 * * *'  # 每天早上 8 点 (UTC+8 = 0:00 UTC)
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   keep-alive:
     runs-on: ubuntu-latest
