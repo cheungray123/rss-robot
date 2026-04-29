@@ -323,7 +323,7 @@ set FEISHU_WEBHOOK_URL=https://open.feishu.cn/open-apis/bot/v2/hook/xxx && set E
 | `totalNewArticles` | 本次发现的新文章总数 |
 | `articles24h` | 24小时内发布的新文章数量（会发送通知） |
 | `articlesOlder` | 超过24小时的新文章数量（不发送通知） |
-| `articles` | 新文章详情数组 |
+| `articles` | 新文章详情数组（24小时内多次检查会累加） |
 
 ### 外链调用
 
@@ -336,3 +336,10 @@ https://raw.githubusercontent.com/cheungray123/rss-robot/master/data/last-check-
 **要求：仓库必须为公开(public)属性。**
 
 > 注意：GitHub Raw URL 有 60次/小时 的访问频率限制，高频调用可能受限。
+
+### 追加规则
+
+| 条件 | 行为 |
+|------|------|
+| 24小时内有新文章 | 追加到现有记录 |
+| 超过24小时无新文章 | 覆盖重置 |

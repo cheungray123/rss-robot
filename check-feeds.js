@@ -797,6 +797,34 @@ function saveOutputToJson(newArticles, allNewArticles) {
 	};
 
 	try {
+		// 检查是否需要追加（24小时内有新文章）还是覆盖（超过24小时无新文章）
+		let shouldAppend = false;
+		if (existsSync(OUTPUT_PATH)) {
+			try {
+				const existing = JSON.parse(readFileSync(OUTPUT_PATH, 'utf-8'));
+				if (existing.articles && existing.articles.length > 0) {
+					const lastArticleTime = new Date(existing.articles[0].pubDate).getTime();
+					const now = Date.now();
+					if (now - lastArticleTime < 86400000) {
+						// 24小时内有文章，追加
+						const merged = {
+							timestamp: output.timestamp,
+							totalNewArticles: existing.totalNewArticles + output.totalNewArticles,
+							articles24h: output.articles24h,
+							articlesOlder: output.articlesOlder,
+							articles: [...output.articles, ...existing.articles]
+						};
+						writeFileSync(OUTPUT_PATH, JSON.stringify(merged, null, '\t') + '\n');
+						console.log(`📄 已追加检查结果到 data/last-check-output.json (累计 ${merged.totalNewArticles} 篇)`);
+						return;
+					}
+				}
+			} catch {
+				// 文件损坏或解析失败，走覆盖逻辑
+			}
+		}
+
+		// 超过24小时无新文章，覆盖
 		writeFileSync(OUTPUT_PATH, JSON.stringify(output, null, '\t') + '\n');
 		console.log(`📄 已保存检查结果到 data/last-check-output.json`);
 	} catch (err) {
