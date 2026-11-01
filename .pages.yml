@@ -12,3 +12,9 @@ collections:
         type: date
 
 # edited via configuration page
+
+media:
+  - name: media
+    label: Media
+    input: assets
+    output: assets
