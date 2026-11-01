@@ -1,0 +1,12 @@
+collections:
+  - name: blog
+    label: Blog
+    path: posts
+    format: md
+    fields:
+      - name: title
+        label: Title
+        type: text
+      - name: date
+        label: Date
+        type: date
