@@ -1,5 +1,5 @@
 ---
-title: Hello from Workers CMS (edited)
+title: Hello from Workers CMS (saved via UI)
 date: 2026-11-01
 
 ---
