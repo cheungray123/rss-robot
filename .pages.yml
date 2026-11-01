@@ -10,3 +10,5 @@ collections:
       - name: date
         label: Date
         type: date
+
+# edited via configuration page
