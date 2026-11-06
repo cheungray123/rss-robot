@@ -1,8 +1,10 @@
+settings:
+  cache: true
+
 collections:
   - name: blog
     label: Blog
     path: posts
-    format: md
     fields:
       - name: title
         label: Title
